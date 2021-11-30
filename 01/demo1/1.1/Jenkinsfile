@@ -1,0 +1,25 @@
+pipeline {
+  agent any
+
+  environment {
+    VERSION = sh(script: 'cd 01/solution && npx -c \'echo $npm_package_version\'', returnStdout: true).trim()
+    VERSION_RC = 'rc.2'
+  }
+
+  stages {
+    stage('Build') {
+      steps {
+        echo "Building version ${VERSION} with suffix: ${VERSION_RC}"
+        sh 'echo "Building version ${VERSION} with suffix: ${VERSION_RC}"'
+        sh '''
+        npm install
+        npm run build
+        '''
+      }
+    }
+
+    stage('Unit Tests') {
+      sh 'npm test'
+    }
+  }
+}
