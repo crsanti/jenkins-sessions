@@ -40,7 +40,7 @@ pipeline {
       }
 
       steps {
-        archiveArtifacts('01/solution/app')
+        archiveArtifacts('01/solution/app/')
       }
     }
   }
