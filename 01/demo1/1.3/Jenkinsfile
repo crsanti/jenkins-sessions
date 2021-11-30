@@ -13,17 +13,12 @@ pipeline {
   stages {
     stage('Audit tools') {
       steps {
-        sh '''
-        git version
-        docker version
-        node --version
-        npm version
-        '''
+        auditTools()
       }
     }
     stage('Build') {
       environment {
-        VERSION_SUFFIX = sh(script: 'if [ "${RC}" == "true" ]; then echo -n "${VERSION_RC}+ci.${BUILD_NUMBER}"; else echo -n "${VERSION_RC}"; fi', returnStdout: true)
+        VERSION_SUFFIX = getVersionSuffix()
       }
       steps {
         dir('./01/solution') {
@@ -54,4 +49,21 @@ pipeline {
       }
     }
   }
+}
+
+String getVersionSuffix() {
+  if (params.RC) {
+    return "${env.VERSION_RC}+ci.${env.BUILD_NUMBER}"
+  } else {
+    return env.VERSION_RC
+  }
+}
+
+void auditTools() {
+  sh '''
+  git version
+  docker version
+  node --version
+  npm version
+  '''
 }
