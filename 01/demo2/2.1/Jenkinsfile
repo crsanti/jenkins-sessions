@@ -1,0 +1,13 @@
+library identifier: 'jenkins-sessions-library@master', retriever: modernSMC([$class: 'GitSMCSource', remote: 'https://github.com/crsanti/jenkins-sessions-library.git'])
+
+pipeline {
+  agent any
+
+  stages {
+    stage('Audit tools') {
+      steps {
+        auditTools()
+      }
+    }
+  }
+}
