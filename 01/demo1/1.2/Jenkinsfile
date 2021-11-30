@@ -1,0 +1,47 @@
+pipeline {
+  agent any
+
+  parameters {
+    booleanParam(name: 'RC', defaultValue: false, description: 'Is this a Release Candidate?')
+  }
+
+  environment {
+    VERSION = sh(script: 'cd 01/solution && npx -c \'echo $npm_package_version\'', returnStdout: true).trim()
+    VERSION_RC = 'rc.2'
+  }
+
+  stages {
+    stage('Build') {
+      environment {
+        VERSION_SUFFIX = sh(script: 'if [ "${params.RC} == "true" ]; then echo -n "${VERSION_RC}+ci.${BUILD_NUMBER}"; else echo -n "${VERSION_RC}"; fi', returnStdout: true)
+      }
+      steps {
+        dir('./01/solution') {
+          echo "Building version ${VERSION} with suffix: ${VERSION_SUFFIX}"
+          sh '''
+          npm install
+          npm run build
+          '''
+        }
+      }
+    }
+
+    stage('Unit Tests') {
+      steps {
+        dir('./01/solution') {
+          sh 'npm test'
+        }
+      }
+    }
+
+    stage('Publish') {
+      when {
+        expression { return params.RC }
+      }
+
+      steps {
+        archiveArtifacts('01/solution/app')
+      }
+    }
+  }
+}
