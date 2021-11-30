@@ -9,18 +9,22 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        echo "Building version ${VERSION} with suffix: ${VERSION_RC}"
-        sh 'echo "Building version ${VERSION} with suffix: ${VERSION_RC}"'
-        sh '''
-        npm install
-        npm run build
-        '''
+        dir('./01/solution') {
+          echo "Building version ${VERSION} with suffix: ${VERSION_RC}"
+          sh 'echo "Building version ${VERSION} with suffix: ${VERSION_RC}"'
+          sh '''
+          npm install
+          npm run build
+          '''
+        }
       }
     }
 
     stage('Unit Tests') {
       steps {
-        sh 'npm test'
+        dir('./01/solution') {
+          sh 'npm test'
+        }
       }
     }
   }
