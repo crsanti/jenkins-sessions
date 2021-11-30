@@ -18,7 +18,7 @@ pipeline {
 
     stage('Test') {
       steps {
-        echo "Testing. In can see release ${RELEASE}, but not log level ${LOG_LEVEL}"
+        echo "Testing. In can see release ${RELEASE}, but not log level"
       }
     }
   }
