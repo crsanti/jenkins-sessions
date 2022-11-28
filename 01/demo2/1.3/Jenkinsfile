@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+    environment {
+        RELEASE='0.0.1'
+    }
+    stages {
+        stage('Build') {
+            environment {
+                LOG_LEVEL='INFO'
+            }
+            parallel {
+                stage('linux-arm64') {
+                    steps {
+                        echo "Building release ${RELEASE} for ${STAGE_NAME} with log level ${LOG_LEVEL}..."
+                        sh 'sleep 5'
+                    }
+                }
+                stage('linux-amd64') {
+                    steps {
+                        echo "Building release ${RELEASE} for ${STAGE_NAME} with log level ${LOG_LEVEL}..."
+                        sh 'sleep 10'
+                    }
+                }
+                stage('windows-amd64') {
+                    steps {
+                        echo "Building release ${RELEASE} for ${STAGE_NAME} with log level ${LOG_LEVEL}..."
+                        sh 'sleep 7'
+                    }
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                echo "Testing release ${RELEASE}..."
+            }
+        }
+        stage('Deploy') {
+            input {
+                message 'Deploy?'
+                ok 'Do it!'
+                parameters {
+                    string(name: 'TARGET_ENVIRONMENT', defaultValue: 'PROD', description: 'Target deployment environment')
+                }
+            }
+            steps {
+                echo "Deploying release ${RELEASE} to environment ${TARGET_ENVIRONMENT}"
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Prints wether deploy happened or not, success or failure'
+        }
+    }
+}
