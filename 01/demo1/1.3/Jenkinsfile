@@ -10,9 +10,9 @@ pipeline {
             steps {
                 echo "This is the build number $BUILD_NUMBER of demo $DEMO"
                 sh '''
-                  echo "Using a multi-line shell step"
-                  chmod +x test.sh
-                  ./test.sh
+                echo "Using a multi-line shell step"
+                chmod +x 01/demo1/1.3/test.sh
+                ./01/demo1/1.3/test.sh
                 '''
             }
         }
